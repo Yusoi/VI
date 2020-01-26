@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<project name="Sub Space Ambient Occlusion" width=512 height=512>
+    <assets>
+        <scenes>
+            <scene name="Barrel" param="UNITIZE">
+				<TRANSLATE x=0 y=1 z= 0 />
+				<file name="models/barrel/metal_barrel.obj"/>
+			</scene>
+			<scene name="Plane" >
+				<SCALE x=200 y=200 z=200 />
+				<file name="models/plane/plane.obj"/>
+			</scene>
+        </scenes>
+
+        <viewports>
+			<viewport name="MainViewport">
+				<CLEAR_COLOR r="1.0" g="1.0" b="1.0" />
+			</viewport>
+		</viewports>
+
+        <cameras>
+            <camera name="MainCamera" >
+				<viewport name="MainViewport" />
+				<TYPE value="PERSPECTIVE"/>
+                <POSITION x="150" y="12.6437" z="67.9942" w="1" />
+                <VIEW x="-0.977805" y="-0.209222" z="0.0111561" w="0" />
+			</camera>
+        </cameras>
+
+        <lights>
+        </lights>
+
+        <materialLibs>
+        </materialLibs>
+    </assets>
+
+    <pipelines>
+        <pipeline name="ssao" defaultCamera="MainCamera">
+            <pass class="default" name="plane" >
+				<scenes>
+					<scene name="Plane" />
+				</scenes>
+				<camera name="MainCamera" />
+				<lights>
+					<light name="Sun" />
+				</lights>
+			</pass>
+
+            
+        </pipeline>
+    </pipelines>
+
+    <interface>
+    </interface>
+</project>
