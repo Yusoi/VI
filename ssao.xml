@@ -22,15 +22,19 @@
             <camera name="MainCamera" >
 				<viewport name="MainViewport" />
 				<TYPE value="PERSPECTIVE"/>
-                <POSITION x="150" y="12.6437" z="67.9942" w="1" />
-                <VIEW x="-0.977805" y="-0.209222" z="0.0111561" w="0" />
+                <POSITION x="10" y="4" z="4" w="1" />
+                <VIEW x="-0.977805" y="-0.209222" z="-0.2" w="0" />
 			</camera>
         </cameras>
 
         <lights>
+            <light name="Sun">
+				<DIRECTION x=-2 y=-2 z=-2 />
+			</light>
         </lights>
 
         <materialLibs>
+            <materialLib filename="ssao.mlib" />
         </materialLibs>
     </assets>
 
@@ -46,6 +50,20 @@
 				</lights>
 			</pass>
 
+            <pass class="default" name="gBuffer" >
+				<scenes>
+					<scene name="Barrel" />
+				</scenes>
+				<camera name="MainCamera" />
+				<lights>
+					<light name="Sun" />
+				</lights>
+				<viewport name="MainViewport" />
+				<renderTarget name = "gBuffer" fromLibrary="Sub Space Ambient Occlusion" />
+				<materialMaps>
+					<map fromMaterial="DefaultOBJMaterial" toMaterial="gBuffer" toLibrary="Sub Space Ambient Occlusion" />
+				</materialMaps>
+			</pass>
             
         </pipeline>
     </pipelines>

@@ -8,14 +8,15 @@
     </textures>
 
     <shaders>
-        <shader name="ssao"         vs = "shaders/ssao.vert"
-                                    ps = "shaders/ssao.frag" />
+        <!--<shader name="ssao"         vs = "shaders/ssao.vert"
+                                    ps = "shaders/ssao.frag" />-->
         <shader name="gBuffer" 		vs = "shaders/gBuffer.vert" 
 									ps = "shaders/gBuffer.frag" />
     </shaders>
 
+    
     <renderTargets>
-        <renderTarget name="gbuffer">
+        <renderTarget name="gBuffer">
             <SIZE width=1024 height=1024/>
             <LAYERS value=2/>
             <SAMPLES value=8/>
@@ -32,16 +33,18 @@
     </renderTargets>
 
     <materials>
+    <!--
         <material name="ssao">
             <shader name="ssao">
                 <values>
-                    <!-- TODO -->
+                    < TODO >
                 </values>
             </shader>
             <textures>
-                <!-- TODO -->
+                < TODO >
             </textures>
         </material>
+        -->
 
         <material name="gBuffer">
 			<shader name="gBuffer">
@@ -61,28 +64,28 @@
 					<valueof uniform="m_normal" 
 							 type="RENDERER" context="CURRENT" 
 							 component="NORMAL" />
-					 
-					<valueof uniform="l_dir"
-							 type="LIGHT" context="CURRENT" 
-							 component="DIRECTION" id=0 />
 
 					<valueof uniform="diffuse"
                              type="TEXTURE_BINDING" context="CURRENT"
-                             component="UNIT" unit=0 />
+                             component="UNIT" id=0 />
 
                     <valueof uniform="normalMap"
                              type="TEXTURE_BINDING" context="CURRENT"
-                             component="UNIT" unit=1 />
+                             component="UNIT" id=1 />
 
                     <valueof uniform="specularMap"
                              type="TEXTURE_BINDING" context="CURRENT"
-                             component="UNIT" unit=2 />
+                             component="UNIT" id=2 />
+
+                    <valueof uniform="l_dir"
+							 type="LIGHT" context="Sun" 
+							 component="DIRECTION" />
 				 </values>
 			</shader>
             <textures>
-                <texture name="diffuse" unit=0 />
-                <texture name="normalMap" unit=1 />
-                <texture name="specularMap" unit=2 />
+                <texture name="diffuse" UNIT=0 />
+                <texture name="normalMap" UNIT=1 />
+                <texture name="specularMap" UNIT=2 />
             </textures>
 		</material>
 	</materials>
