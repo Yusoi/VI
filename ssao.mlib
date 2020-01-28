@@ -8,13 +8,14 @@
     </textures>
 
     <shaders>
-        <!--<shader name="ssao"         vs = "shaders/ssao.vert"
-                                    ps = "shaders/ssao.frag" />-->
         <shader name="gBuffer" 		vs = "shaders/gBuffer.vert" 
 									ps = "shaders/gBuffer.frag" />
+        <shader name="ssao"         ps = "shaders/ssao.frag" />
+        <shader name="blur"       vs = "shaders/gStage.vert"
+                                    ps = "shaders/gStage.frag" />
+        <shader name="lPass"        ps = "shaders/lPass.frag" />
     </shaders>
 
-    
     <renderTargets>
         <renderTarget name="gBuffer">
             <SIZE width=1024 height=1024/>
@@ -33,19 +34,6 @@
     </renderTargets>
 
     <materials>
-    <!--
-        <material name="ssao">
-            <shader name="ssao">
-                <values>
-                    < TODO >
-                </values>
-            </shader>
-            <textures>
-                < TODO >
-            </textures>
-        </material>
-        -->
-
         <material name="gBuffer">
 			<shader name="gBuffer">
 				<values>
@@ -88,5 +76,38 @@
                 <texture name="specularMap" UNIT=2 />
             </textures>
 		</material>
+
+        <!--    <material name="ssao">
+            <shader name="ssao">
+                <values>
+                    < TODO >
+                </values>
+            </shader>
+            <textures>
+                < TODO >
+            </textures>
+        </material>-->
+
+        <!--    <material name="blur">
+            <shader name="blur">
+                <values>
+                    < TODO >
+                </values>
+            </shader>
+            <textures>
+                < TODO >
+            </textures>
+        </material>-->
+
+        <!--    <material name="lPass">
+            <shader name="lPass">
+                <values>
+                    < TODO >
+                </values>
+            </shader>
+            <textures>
+                < TODO >
+            </textures>
+        </material>-->
 	</materials>
 </materialLib>

@@ -61,8 +61,38 @@
 				<viewport name="MainViewport" />
 				<renderTarget name = "gBuffer" fromLibrary="Sub Space Ambient Occlusion" />
 				<materialMaps>
-					<map fromMaterial="DefaultOBJMaterial" toMaterial="gBuffer" toLibrary="Sub Space Ambient Occlusion" />
+					<map fromMaterial="DefaultOBJMaterial" 
+						 toMaterial="gBuffer" 
+						 toLibrary="Sub Space Ambient Occlusion" />
 				</materialMaps>
+			</pass>
+
+			<pass class="quad" name="ssao" >
+				<materialMaps>
+					<map fromMaterial="__Quad" 
+						 toLibrary="Texture" 
+						 toMaterial="ssao" />
+				</materialMaps>
+				<viewport name="MainViewport" />
+				<renderTarget name = "color" fromLibrary="Sub Space Ambient Occlusion" />
+			</pass>
+
+			<pass class="quad" name="blur" >
+				<materialMaps>
+					<map fromMaterial="__Quad" 
+						 toLibrary="Texture" toMaterial="blur" />
+				</materialMaps>
+				<viewport name="MainViewport" />
+				<renderTarget name = "color" fromLibrary="Sub Space Ambient Occlusion" />
+			</pass>
+
+			<pass class="quad" name="lPass" >
+				<materialMaps>
+					<map fromMaterial="__Quad" 
+						 toLibrary="Texture" toMaterial="lPass" />
+				</materialMaps>
+				<viewport name="MainViewport" />
+				<renderTarget name = "color" fromLibrary="Sub Space Ambient Occlusion" />
 			</pass>
             
         </pipeline>
