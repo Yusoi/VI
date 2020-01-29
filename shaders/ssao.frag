@@ -1,47 +1,60 @@
-#version 330
-out vec4 FragColor;
-  
-in vec2 TexCoords;
+#version 330 core
 
+//input
+in Data{
+    vec2 texCoords;
+} DataIn;
+
+//uniform input
+uniform mat4 m_p;
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
-uniform sampler2D gAlbedo;
-uniform sampler2D ssao;
+uniform sampler2D texNoise;
+uniform vec3 samples[64];
 
-struct Light {
-    vec3 Position;
-    vec3 Color;
-    
-    float Linear;
-    float Quadratic;
-    float Radius;
-};
-uniform Light light;
+//output to renderTarget
+layout (location = 0) out float ssaoInput;
+
+// parameters (you'd probably want to use them as uniforms to more easily tweak the effect)
+int kernelSize = 64;
+float radius = 0.5;
+float bias = 0.025;
+
+// tile noise texture over screen based on screen dimensions divided by noise size
+const vec2 noiseScale = vec2(1280.0/4.0, 720.0/4.0); 
 
 void main()
 {
-    // retrieve data from gbuffer
-    vec3 FragPos = texture(gPosition, TexCoords).rgb;
-    vec3 Normal = texture(gNormal, TexCoords).rgb;
-    vec3 Diffuse = texture(gAlbedo, TexCoords).rgb;
-    float AmbientOcclusion = texture(ssao, TexCoords).r;
-    // blinn-phong (in view-space)
-    vec3 ambient = vec3(0.3 * Diffuse * AmbientOcclusion); // here we add occlusion factor
-    vec3 lighting  = ambient; 
-    vec3 viewDir  = normalize(-FragPos); // viewpos is (0.0.0) in view-space
-    // diffuse
-    vec3 lightDir = normalize(light.Position - FragPos);
-    vec3 diffuse = max(dot(Normal, lightDir), 0.0) * Diffuse * light.Color;
-    // specular
-    vec3 halfwayDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(Normal, halfwayDir), 0.0), 8.0);
-    vec3 specular = light.Color * spec;
-    // attenuation
-    float dist = length(light.Position - FragPos);
-    float attenuation = 1.0 / (1.0 + light.Linear * dist + light.Quadratic * dist * dist);
-    diffuse  *= attenuation;
-    specular *= attenuation;
-    lighting += diffuse + specular;
-
-    FragColor = vec4(lighting, 1.0);
+    // get input for SSAO algorithm
+    vec3 fragPos = texture(gPosition, DataIn.texCoords).xyz;
+    vec3 normal = normalize(texture(gNormal, DataIn.texCoords).rgb);
+    vec3 randomVec = normalize(texture(texNoise, DataIn.texCoords * noiseScale).xyz);
+    // create TBN change-of-basis matrix: from tangent-space to view-space
+    vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal));
+    vec3 bitangent = cross(normal, tangent);
+    mat3 TBN = mat3(tangent, bitangent, normal);
+    // iterate over the sample kernel and calculate occlusion factor
+    float occlusion = 0.0;
+    for(int i = 0; i < kernelSize; ++i)
+    {
+        // get sample position
+        vec3 sample = TBN * samples[i]; // from tangent to view-space
+        sample = fragPos + sample * radius; 
+        
+        // project sample position (to sample texture) (to get position on screen/texture)
+        vec4 offset = vec4(sample, 1.0);
+        offset = m_p * offset; // from view to clip-space
+        offset.xyz /= offset.w; // perspective divide
+        offset.xyz = offset.xyz * 0.5 + 0.5; // transform to range 0.0 - 1.0
+        
+        // get sample depth
+        float sampleDepth = texture(gPosition, offset.xy).z; // get depth value of kernel sample
+        
+        // range check & accumulate
+        float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));
+        occlusion += (sampleDepth >= sample.z + bias ? 1.0 : 0.0) * rangeCheck;           
+    }
+    occlusion = 1.0 - (occlusion / kernelSize);
+    
+    ssaoInput = occlusion;
 }

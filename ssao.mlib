@@ -9,12 +9,14 @@
     </textures>
 
     <shaders>
-        <shader name="gBuffer" 		vs = "shaders/gBuffer.vert" 
-									ps = "shaders/gBuffer.frag" />
-        <shader name="ssao"         ps = "shaders/ssao.frag" />
-        <shader name="blur"       vs = "shaders/gStage.vert"
-                                    ps = "shaders/gStage.frag" />
-        <shader name="lPass"        ps = "shaders/lPass.frag" />
+        <shader name="gBuffer" 		        vs = "shaders/gBuffer.vert" 
+									        ps = "shaders/gBuffer.frag" />
+        <shader name="ssao"                 vs = "shaders/ssao.vert"
+                                            ps = "shaders/ssao.frag" />
+        <shader name="blur"                 vs = "shaders/blur.vert"
+                                            ps = "shaders/blur.frag" />
+        <shader name="lightingPass"         vs = "shaders/lightingPass.vert"
+                                            ps = "shaders/lightingPass.frag" />
     </shaders>
 
     <renderTargets>
@@ -27,6 +29,28 @@
                 <color name="gPosition" internalFormat="RGBA" />
 				<color name="gNormal" internalFormat="RG32F" />
 				<color name="gAlbedoSpec" internalFormat="RGBA" />
+            </colors>
+            <depth name="depthMap" internalFormat="DEPTH_COMPONENT32F" />
+        </renderTarget>
+
+        <renderTarget name="ssao">
+            <SIZE width=1024 height=1024/>
+            <LAYERS value=2/>
+            <SAMPLES value=8/>
+            <CLEAR_VALUES r=0.0 g=0.0 b=0.0 a=0.0/>
+            <colors>
+                <color name="ssaoInput" internalFormat="R32F" />
+            </colors>
+            <depth name="depthMap" internalFormat="DEPTH_COMPONENT32F" />
+        </renderTarget>
+
+        <renderTarget name="blur">
+            <SIZE width=1024 height=1024/>
+            <LAYERS value=2/>
+            <SAMPLES value=8/>
+            <CLEAR_VALUES r=0.0 g=0.0 b=0.0 a=0.0/>
+            <colors>
+                <color name="blurInput" internalFormat="RGBA" />
             </colors>
             <depth name="depthMap" internalFormat="DEPTH_COMPONENT32F" />
         </renderTarget>
@@ -79,6 +103,14 @@
         <material name="ssao">
             <shader name="ssao">
                 <values>
+                    <valueof uniform="m_pvm" 
+							 type="RENDERER" context="CURRENT" 
+							 component="PROJECTION_VIEW_MODEL" />
+
+                    <valueof uniform="m_p"
+                             type="RENDERER" context="CURRENT"
+                             component="PROJECTION" />
+
                     <valueof uniform="gPosition"
                              type="TEXTURE_BINDING" context="CURRENT" 
                              component="UNIT" id=0 />
@@ -90,6 +122,10 @@
                     <valueof uniform="texNoise"
                              type="TEXTURE_BINDING" context="CURRENT" 
                              component="UNIT" id=2 />
+
+                    <valueof uniform="samples"
+                             type="BUFFER_BINDING" context="CURRENT"
+                             component="UNIT" id=3 />
                 </values>
             </shader>
             <textures>
@@ -97,28 +133,58 @@
                 <texture name="gNormal" UNIT=1 />
                 <texture name="texNoise" UNIT=2 />
             </textures>
+            <buffers>
+                <buffer name="samples" UNIT=3 />
+            </buffers>
         </material>
 
         <material name="blur">
             <shader name="blur">
                 <values>
-                    <!-- TODO -->
+                    <valueof uniform="m_pvm" 
+							 type="RENDERER" context="CURRENT" 
+							 component="PROJECTION_VIEW_MODEL" />
+
+                    <valueof uniform="ssaoInput"
+                             type="TEXTURE_BINDING" context="CURRENT"
+                             component="UNIT" id=0 />
                 </values>
             </shader>
             <textures>
-                <!-- TODO -->
+                <texture name="ssaoInput" UNIT=0 />
             </textures>
         </material>
 
-        <!--    <material name="lPass">
-            <shader name="lPass">
+        <material name="lightingPass">
+            <shader name="lightingPass">
                 <values>
-                    < TODO >
+                    <valueof uniform="m_pvm" 
+							 type="RENDERER" context="CURRENT" 
+							 component="PROJECTION_VIEW_MODEL" />
+
+                    <valueof uniform="gPosition"
+                             type="TEXTURE_BINDING" context="CURRENT" 
+                             component="UNIT" id=0 />
+
+                    <valueof uniform="gNormal"
+                             type="TEXTURE_BINDING" context="CURRENT" 
+                             component="UNIT" id=1 />
+
+                    <valueof uniform="gAlbedoSpec"
+                             type="TEXTURE_BINDING" context="CURRENT" 
+                             component="UNIT" id=2 />
+
+                    <valueof uniform="blurInput"
+                             type="TEXTURE_BINDING" context="CURRENT"
+                             component="UNIT" id=3 />
                 </values>
             </shader>
             <textures>
-                < TODO >
+                <texture name="gPosition" UNIT=0 />
+                <texture name="gNormal" UNIT=1 />
+                <texture name="gAlbedoSpec" UNIT=2 />
+                <texture name="blurInput" UNIT=3 />
             </textures>
-        </material>-->
+        </material>
 	</materials>
 </materialLib>

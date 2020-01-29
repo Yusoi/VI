@@ -3,14 +3,6 @@
 in Data {
 	vec3 pos;
 	vec2 texCoords;
-	//vec3 normal;
-	
-	//Maybe not needed
-	//vec4 eye;
-	//vec3 tangent;
-	//vec3 bitangent;
-	//vec3 l_dir;
-	//flat int tex;
 } DataIn;
 
 layout (location = 0) out vec3 gPosition;
@@ -31,6 +23,4 @@ void main() {
 
 	//Stores the specular intensity in the alpha channel of the buffer
 	gAlbedoSpec.a = texture(specularMap, DataIn.texCoords).r;
-
-	colorOut = gAlbedoSpec;
 }
