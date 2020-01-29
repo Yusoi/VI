@@ -40,6 +40,10 @@
 
     <pipelines>
         <pipeline name="ssao" defaultCamera="MainCamera">
+
+			<preScript file="samples.lua" script="sample_generation" />
+			<preScript file="samples.lua" script="noise_generation" />
+
             <pass class="default" name="plane" >
 				<scenes>
 					<scene name="Plane" />
