@@ -56,6 +56,28 @@
         </renderTarget>
     </renderTargets>
 
+    <buffers>
+        <buffer name="samples">
+            <DIM x=64 y=1 z=1 />
+            <structure>
+                <field value="FLOAT" />
+                <field value="FLOAT" />
+                <field value="FLOAT" />
+            </structure>
+            <CLEAR value="NEVER">
+        </buffer>
+
+        <buffer name="noise">
+            <DIM x=4 y=4 z =1 />
+            <structure>
+                <field value="FLOAT" />
+                <field value="FLOAT" />
+                <field value="FLOAT" />
+            </structure>
+            <CLEAR value="NEVER">
+        </buffer>
+    </buffers>
+
     <materials>
         <material name="gBuffer">
 			<shader name="gBuffer">
@@ -103,22 +125,22 @@
                              type="TEXTURE_BINDING" context="CURRENT" 
                              component="UNIT" id=1 />
 
-                    <valueof uniform="texNoise"
-                             type="TEXTURE_BINDING" context="CURRENT" 
-                             component="UNIT" id=2 />
-
                     <valueof uniform="samples"
                              type="BUFFER_BINDING" context="CURRENT"
+                             component="UNIT" id=2 />
+
+                    <valueof uniform="texNoise"
+                             type="TEXTURE_BINDING" context="CURRENT" 
                              component="UNIT" id=3 />
                 </values>
             </shader>
             <textures>
                 <texture name="gPosition" UNIT=0 />
                 <texture name="gNormal" UNIT=1 />
-                <texture name="texNoise" UNIT=2 />
             </textures>
             <buffers>
-                <buffer name="samples" UNIT=3 />
+                <buffer name="samples" UNIT=2 />
+                <buffer name="texNoise" UNIT=3 />
             </buffers>
         </material>
 
