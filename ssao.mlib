@@ -2,9 +2,10 @@
 <materialLib name="Sub Space Ambient Occlusion">
 
     <textures>
-        <texture name="diffuse" filename="models/barrel/diffus_yellow.png" mipmap=true />
+        <texture name="diffuseMap" filename="models/barrel/diffus_yellow.png" mipmap=true />
         <texture name="normalMap" filename="models/barrel/normal_middle_bumps.png" mipmap=true />
         <texture name="specularMap" filename="models/barrel/specular.png" mipmap=true />
+        <texture name="texNoise" filename="models/noise/fractalNoise.jpg" mpimap=true />
     </textures>
 
     <shaders>
@@ -23,11 +24,9 @@
             <SAMPLES value=8/>
             <CLEAR_VALUES r=0.0 g=0.0 b=0.0 a=0.0/>
             <colors>
-                <color name="normal" internalFormat="RGBA" />
-				<color name="texCoord" internalFormat="RG32F" />
-				<color name="tangent" internalFormat="RGBA" />
-				<color name="pos" internalFormat="RGBA32F" />
-				<color name="eye" internalFormat="RGBA32F" />
+                <color name="gPosition" internalFormat="RGBA" />
+				<color name="gNormal" internalFormat="RG32F" />
+				<color name="gAlbedoSpec" internalFormat="RGBA" />
             </colors>
             <depth name="depthMap" internalFormat="DEPTH_COMPONENT32F" />
         </renderTarget>
@@ -53,7 +52,7 @@
 							 type="RENDERER" context="CURRENT" 
 							 component="NORMAL" />
 
-					<valueof uniform="diffuse"
+					<valueof uniform="diffuseMap"
                              type="TEXTURE_BINDING" context="CURRENT"
                              component="UNIT" id=0 />
 
@@ -71,33 +70,45 @@
 				 </values>
 			</shader>
             <textures>
-                <texture name="diffuse" UNIT=0 />
+                <texture name="diffuseMap" UNIT=0 />
                 <texture name="normalMap" UNIT=1 />
                 <texture name="specularMap" UNIT=2 />
             </textures>
 		</material>
 
-        <!--    <material name="ssao">
+        <material name="ssao">
             <shader name="ssao">
                 <values>
-                    < TODO >
+                    <valueof uniform="gPosition"
+                             type="TEXTURE_BINDING" context="CURRENT" 
+                             component="UNIT" id=0 />
+
+                    <valueof uniform="gNormal"
+                             type="TEXTURE_BINDING" context="CURRENT" 
+                             component="UNIT" id=1 />
+
+                    <valueof uniform="texNoise"
+                             type="TEXTURE_BINDING" context="CURRENT" 
+                             component="UNIT" id=2 />
                 </values>
             </shader>
             <textures>
-                < TODO >
+                <texture name="gPosition" UNIT=0 />
+                <texture name="gNormal" UNIT=1 />
+                <texture name="texNoise" UNIT=2 />
             </textures>
-        </material>-->
+        </material>
 
-        <!--    <material name="blur">
+        <material name="blur">
             <shader name="blur">
                 <values>
-                    < TODO >
+                    <!-- TODO -->
                 </values>
             </shader>
             <textures>
-                < TODO >
+                <!-- TODO -->
             </textures>
-        </material>-->
+        </material>
 
         <!--    <material name="lPass">
             <shader name="lPass">

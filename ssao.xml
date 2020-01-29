@@ -3,11 +3,11 @@
     <assets>
         <scenes>
             <scene name="Barrel" param="UNITIZE">
-				<TRANSLATE x=0 y=1 z= 0 />
+				<TRANSLATE x=0 y=1.5 z=0 />
 				<file name="models/barrel/metal_barrel.obj"/>
 			</scene>
 			<scene name="Plane" >
-				<SCALE x=200 y=200 z=200 />
+				<SCALE x=20 y=20 z=20 />
 				<file name="models/plane/plane.obj"/>
 			</scene>
         </scenes>

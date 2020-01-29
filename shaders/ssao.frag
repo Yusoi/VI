@@ -19,13 +19,12 @@ struct Light {
 uniform Light light;
 
 void main()
-{             
+{
     // retrieve data from gbuffer
     vec3 FragPos = texture(gPosition, TexCoords).rgb;
     vec3 Normal = texture(gNormal, TexCoords).rgb;
     vec3 Diffuse = texture(gAlbedo, TexCoords).rgb;
     float AmbientOcclusion = texture(ssao, TexCoords).r;
-    
     // blinn-phong (in view-space)
     vec3 ambient = vec3(0.3 * Diffuse * AmbientOcclusion); // here we add occlusion factor
     vec3 lighting  = ambient; 
@@ -34,7 +33,7 @@ void main()
     vec3 lightDir = normalize(light.Position - FragPos);
     vec3 diffuse = max(dot(Normal, lightDir), 0.0) * Diffuse * light.Color;
     // specular
-    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    vec3 halfwayDir = normalize(lightDir + viewDir);
     float spec = pow(max(dot(Normal, halfwayDir), 0.0), 8.0);
     vec3 specular = light.Color * spec;
     // attenuation
