@@ -8,7 +8,7 @@ in Data{
 uniform sampler2D ssaoInput;
 
 //output to renderTarget
-layout (location = 0) out vec3 blurInput;
+layout (location = 0) out float blurInput;
 
 void main() {
     vec2 texelSize = 1.0 / vec2(textureSize(ssaoInput, 0));
@@ -21,5 +21,6 @@ void main() {
             result += texture(ssaoInput, TexCoords + offset).r;
         }
     }
+
     blurInput = result / (4.0 * 4.0);
 }  
