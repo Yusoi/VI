@@ -3,7 +3,7 @@
 
     <textures>
         <texture name="diffuseMap" filename="models/barrel/diffus_yellow.png" mipmap=true />
-        <texture name="normalMap" filename="models/barrel/normal_middle_bumps.png" mipmap=true />
+        <texture name="normalMap" filename="models/barrel/normal_no_bumps.png" mipmap=true />
         <texture name="specularMap" filename="models/barrel/specular.png" mipmap=true />
         <texture name="texNoise">
 			<WIDTH value=4 />
@@ -28,12 +28,10 @@
     <renderTargets>
         <renderTarget name="gBuffer">
             <SIZE width=1024 height=1024/>
-            <LAYERS value=2/>
-            <SAMPLES value=8/>
             <CLEAR_VALUES r=0.0 g=0.0 b=0.0 a=0.0/>
             <colors>
                 <color name="gPosition" internalFormat="RGBA" />
-				<color name="gNormal" internalFormat="RG32F" />
+				<color name="gNormal" internalFormat="RGBA" />
 				<color name="gAlbedoSpec" internalFormat="RGBA" />
             </colors>
             <depth name="depthMap" internalFormat="DEPTH_COMPONENT32F" />
@@ -41,9 +39,7 @@
 
         <renderTarget name="ssao">
             <SIZE width=1024 height=1024/>
-            <LAYERS value=2/>
-            <SAMPLES value=8/>
-            <CLEAR_VALUES r=0.0 g=0.0 b=0.0 a=0.0/>
+            <CLEAR_VALUES r=0.0 g=0.0 b=0.0 a=0.0 />
             <colors>
                 <color name="ssaoInput" internalFormat="R32F" />
             </colors>
@@ -52,8 +48,6 @@
 
         <renderTarget name="blur">
             <SIZE width=1024 height=1024/>
-            <LAYERS value=2/>
-            <SAMPLES value=8/>
             <CLEAR_VALUES r=0.0 g=0.0 b=0.0 a=0.0/>
             <colors>
                 <color name="blurInput" internalFormat="R32F" />
@@ -66,6 +60,7 @@
         <buffer name="samples">
             <DIM x=64 y=1 z=1 />
             <structure>
+                <field value="FLOAT" />
                 <field value="FLOAT" />
                 <field value="FLOAT" />
                 <field value="FLOAT" />
@@ -98,7 +93,7 @@
             </shader>
             <imageTextures>
                 <imageTexture UNIT=0 texture="texNoise">
-                    <ACCESS value="READ_WRITE" />
+                    <ACCESS value="WRITE_ONLY" />
                     <INTERNAL_FORMAT value="RGBA" />
                 </imageTexture>
             </imageTextures>
@@ -125,9 +120,18 @@
 				 </values>
 			</shader>
             <textures>
-                <texture name="diffuseMap" UNIT=0 />
-                <texture name="normalMap" UNIT=1 />
-                <texture name="specularMap" UNIT=2 />
+                <texture name="diffuseMap" UNIT=0 >
+                    <MIN_FILTER value="NEAREST" />
+                    <MAG_FILTER value="NEAREST" />
+                </texture>
+                <texture name="normalMap" UNIT=1 >
+                    <MIN_FILTER value="NEAREST" />
+                    <MAG_FILTER value="NEAREST" />
+                </texture>
+                <texture name="specularMap" UNIT=2 >
+                    <MIN_FILTER value="NEAREST" />
+                    <MAG_FILTER value="NEAREST" />
+                </texture>
             </textures>
 		</material>
 
@@ -151,13 +155,27 @@
                              component="UNIT" id=1 />
 
                     <valueof uniform="texNoise"
-                             type="IMAGE_TEXTURE" context="CURRENT"
-                             component="UNIT" id=3 />
+                             type="TEXTURE_BINDING" context="CURRENT"
+                             component="UNIT" id=2 />
                 </values>
             </shader>
             <textures>
-                <texture name="gPosition" UNIT=0 />
-                <texture name="gNormal" UNIT=1 />
+                <texture name="gPosition" UNIT=0 >
+                    <MIN_FILTER value="NEAREST" />
+                    <MAG_FILTER value="NEAREST" />
+                    <WRAP_S value="CLAMP_TO_EDGE" />
+                    <WRAP_T value="CLAMP_TO_EDGE" />
+                </texture>
+                <texture name="gNormal" UNIT=1 >
+                    <MIN_FILTER value="NEAREST" />
+                    <MAG_FILTER value="NEAREST" />
+                </texture>
+                <texture name="texNoise" UNIT=2 >
+                    <MIN_FILTER value="NEAREST" />
+                    <MAG_FILTER value="NEAREST" />
+                    <WRAP_S value="REPEAT" />
+                    <WRAP_T value="REPEAT" />
+                </texture>
             </textures>
             <buffers>
                 <buffer name="samples">
@@ -165,12 +183,6 @@
                     <BINDING_POINT value="1" />
                 </buffer>
             </buffers>
-            <imageTextures>
-                <imageTexture UNIT=3 texture="texNoise">
-                    <ACCESS value="READ_WRITE" />
-                    <INTERNAL_FORMAT value="RGBA" />
-                </imageTexture>
-            </imageTextures>
         </material>
 
         <material name="blur">
@@ -186,7 +198,10 @@
                 </values>
             </shader>
             <textures>
-                <texture name="ssaoInput" UNIT=0 />
+                <texture name="ssaoInput" UNIT=0>
+                    <MIN_FILTER value="NEAREST" />
+                    <MAG_FILTER value="NEAREST" />
+                </texture>
             </textures>
         </material>
 
@@ -231,10 +246,24 @@
                 </values>
             </shader>
             <textures>
-                <texture name="gPosition" UNIT=0 />
-                <texture name="gNormal" UNIT=1 />
-                <texture name="gAlbedoSpec" UNIT=2 />
-                <texture name="blurInput" UNIT=3 />
+                <texture name="gPosition" UNIT=0 >
+                    <MIN_FILTER value="NEAREST" />
+                    <MAG_FILTER value="NEAREST" />
+                    <WRAP_S value="CLAMP_TO_EDGE" />
+                    <WRAP_T value="CLAMP_TO_EDGE" />
+                </texture>
+                <texture name="gNormal" UNIT=1 >
+                    <MIN_FILTER value="NEAREST" />
+                    <MAG_FILTER value="NEAREST" />
+                </texture>
+                <texture name="gAlbedoSpec" UNIT=2 >
+                    <MIN_FILTER value="NEAREST" />
+                    <MAG_FILTER value="NEAREST" />
+                </texture>
+                <texture name="blurInput" UNIT=3 >
+                    <MIN_FILTER value="NEAREST" />
+                    <MAG_FILTER value="NEAREST" />
+                </texture>
             </textures>
         </material>
 	</materials>

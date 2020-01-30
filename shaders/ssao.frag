@@ -12,11 +12,12 @@ uniform sampler2D gNormal;
 uniform sampler2D texNoise;
 
 layout(std430, binding = 1) buffer buffer1{
-	vec3 samples[];
+	vec4 samples[];
 };
 
 //output to renderTarget
 layout (location = 0) out float ssaoInput;
+//out vec3 ssaoInput;
 
 // parameters (you'd probably want to use them as uniforms to more easily tweak the effect)
 int kernelSize = 64;
@@ -24,13 +25,13 @@ float radius = 0.5;
 float bias = 0.025;
 
 // tile noise texture over screen based on screen dimensions divided by noise size
-const vec2 noiseScale = vec2(1280.0/4.0, 720.0/4.0); 
+const vec2 noiseScale = vec2(1024.0/4.0, 1024.0/4.0); 
 
 void main()
 {
     // get input for SSAO algorithm
     vec3 fragPos = texture(gPosition, DataIn.texCoords).xyz;
-    vec3 normal = normalize(texture(gNormal, DataIn.texCoords).rgb);
+    vec3 normal = texture(gNormal, DataIn.texCoords).rgb;
     vec3 randomVec = normalize(texture(texNoise, DataIn.texCoords * noiseScale).xyz);
     // create TBN change-of-basis matrix: from tangent-space to view-space
     vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal));
@@ -41,11 +42,11 @@ void main()
     for(int i = 0; i < kernelSize; ++i)
     {
         // get sample position
-        vec3 sample1 = TBN * samples[i]; // from tangent to view-space
-        sample1 = fragPos + sample1 * radius; 
+        vec3 cur_sample = TBN * samples[i].xyz; // from tangent to view-space
+        cur_sample = fragPos + cur_sample * radius; 
         
         // project sample position (to sample texture) (to get position on screen/texture)
-        vec4 offset = vec4(sample1, 1.0);
+        vec4 offset = vec4(cur_sample, 1.0);
         offset = m_p * offset; // from view to clip-space
         offset.xyz /= offset.w; // perspective divide
         offset.xyz = offset.xyz * 0.5 + 0.5; // transform to range 0.0 - 1.0
@@ -55,9 +56,10 @@ void main()
         
         // range check & accumulate
         float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));
-        occlusion += (sampleDepth >= sample1.z + bias ? 1.0 : 0.0) * rangeCheck;           
+        occlusion += (sampleDepth >= cur_sample.z + bias ? 1.0 : 0.0) * rangeCheck;           
     }
+
     occlusion = 1.0 - (occlusion / kernelSize);
     
-    ssaoInput = occlusion;
+    ssaoInput = pow(occlusion,2);
 }

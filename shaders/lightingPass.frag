@@ -12,7 +12,7 @@ uniform float l_linear;
 uniform float l_quadratic;
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
-uniform sampler2D gAlbedo;
+uniform sampler2D gAlbedoSpec;
 uniform sampler2D blurInput;
 
 //output
@@ -23,10 +23,10 @@ void main()
     // retrieve data from gbuffer
     vec3 FragPos = texture(gPosition, DataIn.texCoords).rgb;
     vec3 Normal = texture(gNormal, DataIn.texCoords).rgb;
-    vec3 Diffuse = texture(gAlbedo, DataIn.texCoords).rgb;
+    vec3 Diffuse = texture(gAlbedoSpec, DataIn.texCoords).rgb;
     float AmbientOcclusion = texture(blurInput, DataIn.texCoords).r;
     // blinn-phong (in view-space)
-    vec3 ambient = vec3(0.3 * Diffuse * AmbientOcclusion); // here we add occlusion factor
+    vec3 ambient = vec3(0.3 * Diffuse * AmbientOcclusion); // adding the occlusion factor
     vec3 lighting  = ambient; 
     vec3 viewDir  = normalize(-FragPos); // viewpos is (0.0.0) in view-space
     // diffuse

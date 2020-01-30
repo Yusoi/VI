@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<project name="Screen Space Ambient Occlusion" width=512 height=512>
+<project name="Screen Space Ambient Occlusion" width=1024 height=1024>
     <assets>
         <scenes>
             <scene name="Barrel" param="UNITIZE">
@@ -29,7 +29,7 @@
 
         <lights>
             <light name="Sun">
-				<DIRECTION x=-2 y=-2 z=-2 />
+				<POSITION x=4 y=4 z=4 />
 			</light>
         </lights>
 
@@ -52,16 +52,6 @@
 				<material name="computeNoise" fromLibrary="Screen Space Ambient Occlusion" dimX=4 dimY=4 dimZ=1/>
 			</pass>
 
-            <pass class="default" name="plane" >
-				<scenes>
-					<scene name="Plane" />
-				</scenes>
-				<camera name="MainCamera" />
-				<lights>
-					<light name="Sun" />
-				</lights>
-			</pass>
-
             <pass class="default" name="gBuffer" >
 				<scenes>
 					<scene name="Barrel" />
@@ -81,7 +71,7 @@
 
 			<pass class="quad" name="ssao" >
 				<viewport name="MainViewport" />
-				<renderTarget name="ssao" fromLibrary="Screen Space Ambient Occlusion" />
+					<renderTarget name="ssao" fromLibrary="Screen Space Ambient Occlusion" />
 				<materialMaps>
 					<map fromMaterial="__Quad" 
 						 toLibrary="Screen Space Ambient Occlusion" 
@@ -94,17 +84,20 @@
 				<renderTarget name="blur" fromLibrary="Screen Space Ambient Occlusion" />
 				<materialMaps>
 					<map fromMaterial="__Quad" 
-						 toLibrary="Screen Space Ambient Occlusion" toMaterial="blur" />
+						 toLibrary="Screen Space Ambient Occlusion" 
+						 toMaterial="blur" />
 				</materialMaps>
 			</pass>
-
+	
 			<pass class="quad" name="lightingPass" >
 				<viewport name="MainViewport" />
 				<materialMaps>
 					<map fromMaterial="__Quad" 
-						 toLibrary="Screen Space Ambient Occlusion" toMaterial="lightingPass" />
+						 toLibrary="Screen Space Ambient Occlusion" 
+						 toMaterial="lightingPass" />
 				</materialMaps>
 			</pass>
+			
         </pipeline>
     </pipelines>
 

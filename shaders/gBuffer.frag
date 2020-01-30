@@ -19,7 +19,9 @@ void main() {
     gNormal = normalize(texture(normalMap, DataIn.texCoords).rgb);
 
 	//Stores the diffuse color in the rgb spectrum of the buffer
-	gAlbedoSpec.rgb = texture(diffuseMap, DataIn.texCoords).rgb;
+	//gAlbedoSpec.rgb = texture(diffuseMap, DataIn.texCoords).rgb;
+
+	gAlbedoSpec.rgb = vec3(0.50);
 
 	//Stores the specular intensity in the alpha channel of the buffer
 	gAlbedoSpec.a = texture(specularMap, DataIn.texCoords).r;
