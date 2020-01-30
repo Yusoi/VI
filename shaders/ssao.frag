@@ -12,15 +12,15 @@ uniform sampler2D gNormal;
 uniform sampler2D texNoise;
 
 layout(std430, binding = 1) buffer buffer1{
-	vec4 samples[];
+	vec3 samples[];
 };
 
 //output to renderTarget
 layout (location = 0) out float ssaoInput;
 //out vec3 ssaoInput;
 
-// parameters (you'd probably want to use them as uniforms to more easily tweak the effect)
-int kernelSize = 64;
+// parameters
+int kernelSize = 48;
 float radius = 0.5;
 float bias = 0.025;
 
@@ -45,7 +45,7 @@ void main()
         vec3 cur_sample = TBN * samples[i].xyz; // from tangent to view-space
         cur_sample = fragPos + cur_sample * radius; 
         
-        // project sample position (to sample texture) (to get position on screen/texture)
+        // project sample position (to sample texture to get position on screen/texture)
         vec4 offset = vec4(cur_sample, 1.0);
         offset = m_p * offset; // from view to clip-space
         offset.xyz /= offset.w; // perspective divide
@@ -59,7 +59,7 @@ void main()
         occlusion += (sampleDepth >= cur_sample.z + bias ? 1.0 : 0.0) * rangeCheck;           
     }
 
-    occlusion = 1.0 - (occlusion / kernelSize);
-    
-    ssaoInput = pow(occlusion,2);
+    occlusion = 1-(occlusion / kernelSize);
+
+    ssaoInput = occlusion;
 }

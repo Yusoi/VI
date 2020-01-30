@@ -4,11 +4,15 @@ layout (local_size_x = 4, local_size_y = 4, local_size_z = 1) in;
 
 uniform writeonly image2D texNoise;
 
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
+
 void main(){
     uint x = gl_GlobalInvocationID.x;
     uint y = gl_GlobalInvocationID.y;
 
-    vec4 res = vec4(0.5,0.5,0.5,0.0);
+    vec4 res = vec4(0.2,0.2,0.0,1.0);
 
     imageStore(texNoise,ivec2(x,y),res);
 }

@@ -63,13 +63,14 @@
                 <field value="FLOAT" />
                 <field value="FLOAT" />
                 <field value="FLOAT" />
-                <field value="FLOAT" />
             </structure>
             <CLEAR value="NEVER" />
+            <file name="buffer/samplebuffer.txt" />
         </buffer>
     </buffers>
 
     <materials>
+    <!-->
         <material name="computeSamples">
             <shader name="computeSamples">
                 <values>
@@ -81,7 +82,7 @@
                     <BINDING_POINT value="1" />
                 </buffer>
             </buffers>
-        </material>
+        </material>-->
 
         <material name="computeNoise">
             <shader name="computeNoise">
@@ -141,6 +142,11 @@
                     <valueof uniform="m_pvm" 
 							 type="RENDERER" context="CURRENT" 
 							 component="PROJECTION_VIEW_MODEL" />
+
+                    <!--
+                    <valueof uniform="m_p"
+                             type="CAMERA" context="MainCamera"
+                             component="PROJECTION_MATRIX" />-->
 
                     <valueof uniform="m_p"
                              type="RENDERER" context="CURRENT"

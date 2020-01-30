@@ -44,9 +44,10 @@
 			<!--<preScript file="samples.lua" script="sample_generation" />
 			<preScript file="samples.lua" script="noise_generation" />-->
 
+			<!-->
 			<pass class="compute" name="samples" >
 				<material name="computeSamples" fromLibrary="Screen Space Ambient Occlusion" dimX=64 dimY=1 dimZ=1/>
-			</pass>
+			</pass>-->
 
 			<pass class="compute" name="noise" >
 				<material name="computeNoise" fromLibrary="Screen Space Ambient Occlusion" dimX=4 dimY=4 dimZ=1/>
@@ -79,6 +80,7 @@
 				</materialMaps>
 			</pass>
 
+			
 			<pass class="quad" name="blur" >
 				<viewport name="MainViewport" />
 				<renderTarget name="blur" fromLibrary="Screen Space Ambient Occlusion" />
