@@ -1,4 +1,4 @@
-#version 330  
+#version 430  
 //input
 in Data{
     vec2 texCoords;
@@ -18,7 +18,7 @@ void main() {
         for (int y = -2; y < 2; ++y) 
         {
             vec2 offset = vec2(float(x), float(y)) * texelSize;
-            result += texture(ssaoInput, TexCoords + offset).r;
+            result += texture(ssaoInput, DataIn.texCoords + offset).r;
         }
     }
 

@@ -1,14 +1,20 @@
 <?xml version="1.0" ?>
-<materialLib name="Sub Space Ambient Occlusion">
+<materialLib name="Screen Space Ambient Occlusion">
 
     <textures>
         <texture name="diffuseMap" filename="models/barrel/diffus_yellow.png" mipmap=true />
         <texture name="normalMap" filename="models/barrel/normal_middle_bumps.png" mipmap=true />
         <texture name="specularMap" filename="models/barrel/specular.png" mipmap=true />
-        <texture name="texNoise" filename="models/noise/fractalNoise.jpg" mpimap=true />
+        <texture name="texNoise">
+			<WIDTH value=4 />
+			<HEIGHT value=4 />
+			<INTERNAL_FORMAT value="RGBA" />
+		</texture>	
     </textures>
 
     <shaders>
+        <shader name="computeSamples"       cs = "shaders/computeSamples.comp" />
+        <shader name="computeNoise"         cs = "shaders/computeNoise.comp" />
         <shader name="gBuffer" 		        vs = "shaders/gBuffer.vert" 
 									        ps = "shaders/gBuffer.frag" />
         <shader name="ssao"                 vs = "shaders/ssao.vert"
@@ -64,21 +70,40 @@
                 <field value="FLOAT" />
                 <field value="FLOAT" />
             </structure>
-            <CLEAR value="NEVER">
-        </buffer>
-
-        <buffer name="noise">
-            <DIM x=4 y=4 z =1 />
-            <structure>
-                <field value="FLOAT" />
-                <field value="FLOAT" />
-                <field value="FLOAT" />
-            </structure>
-            <CLEAR value="NEVER">
+            <CLEAR value="NEVER" />
         </buffer>
     </buffers>
 
     <materials>
+        <material name="computeSamples">
+            <shader name="computeSamples">
+                <values>
+                </values>
+            </shader>
+            <buffers>
+                <buffer name="samples">
+                    <TYPE value="SHADER_STORAGE" />
+                    <BINDING_POINT value="1" />
+                </buffer>
+            </buffers>
+        </material>
+
+        <material name="computeNoise">
+            <shader name="computeNoise">
+                <values>
+                    <valueof uniform="texNoise"
+                             type="IMAGE_TEXTURE" context="CURRENT"
+                             component="UNIT" id=0 />
+                </values>
+            </shader>
+            <imageTextures>
+                <imageTexture UNIT=0 texture="texNoise">
+                    <ACCESS value="READ_WRITE" />
+                    <INTERNAL_FORMAT value="RGBA" />
+                </imageTexture>
+            </imageTextures>
+        </material>
+
         <material name="gBuffer">
 			<shader name="gBuffer">
 				<values>
@@ -125,12 +150,8 @@
                              type="TEXTURE_BINDING" context="CURRENT" 
                              component="UNIT" id=1 />
 
-                    <valueof uniform="samples"
-                             type="BUFFER_BINDING" context="CURRENT"
-                             component="UNIT" id=2 />
-
                     <valueof uniform="texNoise"
-                             type="TEXTURE_BINDING" context="CURRENT" 
+                             type="IMAGE_TEXTURE" context="CURRENT"
                              component="UNIT" id=3 />
                 </values>
             </shader>
@@ -139,9 +160,17 @@
                 <texture name="gNormal" UNIT=1 />
             </textures>
             <buffers>
-                <buffer name="samples" UNIT=2 />
-                <buffer name="texNoise" UNIT=3 />
+                <buffer name="samples">
+                    <TYPE value="SHADER_STORAGE" />
+                    <BINDING_POINT value="1" />
+                </buffer>
             </buffers>
+            <imageTextures>
+                <imageTexture UNIT=3 texture="texNoise">
+                    <ACCESS value="READ_WRITE" />
+                    <INTERNAL_FORMAT value="RGBA" />
+                </imageTexture>
+            </imageTextures>
         </material>
 
         <material name="blur">

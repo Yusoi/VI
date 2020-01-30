@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<project name="Sub Space Ambient Occlusion" width=512 height=512>
+<project name="Screen Space Ambient Occlusion" width=512 height=512>
     <assets>
         <scenes>
             <scene name="Barrel" param="UNITIZE">
@@ -41,8 +41,16 @@
     <pipelines>
         <pipeline name="ssao" defaultCamera="MainCamera">
 
-			<preScript file="samples.lua" script="sample_generation" />
-			<preScript file="samples.lua" script="noise_generation" />
+			<!--<preScript file="samples.lua" script="sample_generation" />
+			<preScript file="samples.lua" script="noise_generation" />-->
+
+			<pass class="compute" name="samples" >
+				<material name="computeSamples" fromLibrary="Screen Space Ambient Occlusion" dimX=64 dimY=1 dimZ=1/>
+			</pass>
+
+			<pass class="compute" name="noise" >
+				<material name="computeNoise" fromLibrary="Screen Space Ambient Occlusion" dimX=4 dimY=4 dimZ=1/>
+			</pass>
 
             <pass class="default" name="plane" >
 				<scenes>
@@ -63,30 +71,30 @@
 					<light name="Sun" />
 				</lights>
 				<viewport name="MainViewport" />
-				<renderTarget name="gBuffer" fromLibrary="Sub Space Ambient Occlusion" />
+				<renderTarget name="gBuffer" fromLibrary="Screen Space Ambient Occlusion" />
 				<materialMaps>
 					<map fromMaterial="DefaultOBJMaterial" 
 						 toMaterial="gBuffer" 
-						 toLibrary="Sub Space Ambient Occlusion" />
+						 toLibrary="Screen Space Ambient Occlusion" />
 				</materialMaps>
 			</pass>
 
 			<pass class="quad" name="ssao" >
 				<viewport name="MainViewport" />
-				<renderTarget name="ssao" fromLibrary="Sub Space Ambient Occlusion" />
+				<renderTarget name="ssao" fromLibrary="Screen Space Ambient Occlusion" />
 				<materialMaps>
 					<map fromMaterial="__Quad" 
-						 toLibrary="Sub Space Ambient Occlusion" 
+						 toLibrary="Screen Space Ambient Occlusion" 
 						 toMaterial="ssao" />
 				</materialMaps>
 			</pass>
 
 			<pass class="quad" name="blur" >
 				<viewport name="MainViewport" />
-				<renderTarget name="blur" fromLibrary="Sub Space Ambient Occlusion" />
+				<renderTarget name="blur" fromLibrary="Screen Space Ambient Occlusion" />
 				<materialMaps>
 					<map fromMaterial="__Quad" 
-						 toLibrary="Sub Space Ambient Occlusion" toMaterial="blur" />
+						 toLibrary="Screen Space Ambient Occlusion" toMaterial="blur" />
 				</materialMaps>
 			</pass>
 
@@ -94,10 +102,9 @@
 				<viewport name="MainViewport" />
 				<materialMaps>
 					<map fromMaterial="__Quad" 
-						 toLibrary="Sub Space Ambient Occlusion" toMaterial="lPass" />
+						 toLibrary="Screen Space Ambient Occlusion" toMaterial="lightingPass" />
 				</materialMaps>
 			</pass>
-            
         </pipeline>
     </pipelines>
 

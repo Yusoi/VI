@@ -1,4 +1,4 @@
-#version 330
+#version 430
   
 //input
 in Data{
@@ -6,8 +6,8 @@ in Data{
 } DataIn;
 
 //uniform input
-uniform vec4 l_pos;
-uniform vec4 l_color;
+uniform vec3 l_pos;
+uniform vec3 l_color;
 uniform float l_linear;
 uniform float l_quadratic;
 uniform sampler2D gPosition;
@@ -21,10 +21,10 @@ out vec4 FragColor;
 void main()
 {
     // retrieve data from gbuffer
-    vec3 FragPos = texture(gPosition, texCoords).rgb;
-    vec3 Normal = texture(gNormal, texCoords).rgb;
-    vec3 Diffuse = texture(gAlbedo, texCoords).rgb;
-    float AmbientOcclusion = texture(blurInput, TexCoords).r;
+    vec3 FragPos = texture(gPosition, DataIn.texCoords).rgb;
+    vec3 Normal = texture(gNormal, DataIn.texCoords).rgb;
+    vec3 Diffuse = texture(gAlbedo, DataIn.texCoords).rgb;
+    float AmbientOcclusion = texture(blurInput, DataIn.texCoords).r;
     // blinn-phong (in view-space)
     vec3 ambient = vec3(0.3 * Diffuse * AmbientOcclusion); // here we add occlusion factor
     vec3 lighting  = ambient; 
